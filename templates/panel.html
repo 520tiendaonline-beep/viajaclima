@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Panel - ViajaClima{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="dashboard-title-row">
+        <div>
+            <h2>Mis Destinos y Viajes</h2>
+            <p>Organiza tus futuros viajes y consulta la previsión meteorológica antes de partir.</p>
+        </div>
+        <a href="{{ url_for('asistente') }}" class="btn btn-primary">🧭 ¿No sabes a dónde ir? Pregunta a la IA</a>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <h3>Planificar Nuevo Destino</h3>
+        <p class="section-desc">Selecciona las fechas de tu estadía para consultar el pronóstico día a día:</p>
+        <form action="{{ url_for('panel') }}" method="POST">
+            <div class="form-group">
+                <label for="ciudad">Ciudad de destino:</label>
+                <input 
+                    type="text" 
+                    id="ciudad" 
+                    name="ciudad" 
+                    list="ciudades-sugeridas" 
+                    placeholder="Escribe tu destino... (Ej: Bariloche, París, Salta)" 
+                    autocomplete="off" 
+                    required>
+                <datalist id="ciudades-sugeridas">
+                    {% for c, p in [
+                        ('Bariloche', 'Argentina'),
+                        ('Buenos Aires', 'Argentina'),
+                        ('Mendoza', 'Argentina'),
+                        ('Salta', 'Argentina'),
+                        ('Ushuaia', 'Argentina'),
+                        ('Córdoba', 'Argentina'),
+                        ('Puerto Iguazú', 'Argentina'),
+                        ('San Martín de los Andes', 'Argentina'),
+                        ('El Calafate', 'Argentina'),
+                        ('Mar del Plata', 'Argentina'),
+                        ('Villa Carlos Paz', 'Argentina'),
+                        ('Rosario', 'Argentina'),
+                        ('Tandil', 'Argentina'),
+                        ('Villa La Angostura', 'Argentina'),
+                        ('Cancún', 'México'),
+                        ('Ciudad de México', 'México'),
+                        ('Río de Janeiro', 'Brasil'),
+                        ('Florianópolis', 'Brasil'),
+                        ('Santiago', 'Chile'),
+                        ('Lima', 'Perú'),
+                        ('Cusco', 'Perú'),
+                        ('Cartagena', 'Colombia'),
+                        ('Bogotá', 'Colombia'),
+                        ('Montevideo', 'Uruguay'),
+                        ('Punta del Este', 'Uruguay'),
+                        ('Madrid', 'España'),
+                        ('Barcelona', 'España'),
+                        ('París', 'Francia'),
+                        ('Roma', 'Italia'),
+                        ('Londres', 'Reino Unido'),
+                        ('Ámsterdam', 'Países Bajos'),
+                        ('Berlín', 'Alemania'),
+                        ('Nueva York', 'Estados Unidos'),
+                        ('Miami', 'Estados Unidos'),
+                        ('Orlando', 'Estados Unidos'),
+                        ('Tokio', 'Japón'),
+                        ('Sídney', 'Australia')
+                    ] %}
+                        <option value="{{ c }}" data-pais="{{ p }}">{{ c }} ({{ p }})</option>
+                    {% endfor %}
+                </datalist>
+                <small class="form-hint">💡 Sugerencias automáticas con autocompletado de país.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="pais">País (se completa automáticamente):</label>
+                <input type="text" id="pais" name="pais" placeholder="Ej: Argentina">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_inicio">Desde:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_fin">Hasta:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Guardar y Consultar Previsión</button>
+        </form>
+    </div>
+
+    <div class="trips-list">
+        <h3>Destinos Guardados ({{ viajes|length }})</h3>
+        {% if viajes %}
+            <div class="cards-grid">
+                {% for v in viajes %}
+                    <div class="card trip-card">
+                        <div class="trip-header">
+                            <h4>📍 {{ v.ciudad }}, {{ v.pais }}</h4>
+                            <span class="trip-date">📅 {{ v.fecha_inicio }} al {{ v.fecha_fin }}</span>
+                        </div>
+                        <p class="trip-weather"><strong>Pronóstico:</strong> {{ v.clima_resumen }}</p>
+                        <div class="trip-card-actions">
+                            <a href="{{ url_for('detalle_viaje', viaje_id=v.id) }}" class="btn btn-secondary btn-sm">Ver Pronóstico Diario e IA &rarr;</a>
+                            <form action="{{ url_for('eliminar_viaje', viaje_id=v.id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este destino?');" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Aún no has registrado viajes.</p>
+                <p>Agrega tu primer destino en el formulario de la izquierda o <a href="{{ url_for('asistente') }}">pídele ideas al Asistente IA</a>.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

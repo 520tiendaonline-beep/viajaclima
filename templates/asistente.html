@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Asistente IA - ¿A dónde viajar? - ViajaClima{% endblock %}
+
+{% block content %}
+<div class="assistant-container">
+    <div class="card">
+        <h2>🧭 Asistente Inteligente de Viajes</h2>
+        <p class="section-desc">
+            Cuéntale a la IA qué tienes en mente: tus gustos, clima ideal, presupuesto o días disponibles, y te recomendará los mejores destinos y actividades.
+        </p>
+
+        <form action="{{ url_for('asistente') }}" method="POST" class="assistant-form">
+            <div class="form-group">
+                <label for="pregunta"><strong>¿Qué tipo de viaje estás buscando?</strong></label>
+                <textarea 
+                    id="pregunta" 
+                    name="pregunta" 
+                    rows="3" 
+                    class="form-control"
+                    placeholder="Ejemplo: Quiero escaparme 4 días con mi pareja a un lugar con montañas, rica gastronomía y clima fresco. ¿A dónde nos recomiendas ir y qué hacer?"
+                    required>{{ pregunta or '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">✨ Consultar Recomendaciones a la IA</button>
+        </form>
+
+        {% if respuesta %}
+            <hr class="separator">
+            <div class="ia-section">
+                <h3>💡 Sugerencia Personalizada del Asistente:</h3>
+                <div class="ia-result">
+                    <pre>{{ respuesta }}</pre>
+                </div>
+                <div class="ia-actions">
+                    <a href="{{ url_for('panel') }}" class="btn btn-secondary">&larr; Ir a Mis Viajes para agendar este destino</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

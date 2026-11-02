@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - ViajaClima{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <h2>Crear una cuenta</h2>
+        <form action="{{ url_for('registro') }}" method="POST" id="form-registro" novalidate>
+            <div class="form-group">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez">
+                <small class="error-msg" id="error-nombre"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                <small class="error-msg" id="error-email"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña (mínimo 6 caracteres):</label>
+                <input type="password" id="password" name="password" required minlength="6">
+                <small class="error-msg" id="error-password"></small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
+        </form>
+        <p class="form-footer">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# misc
+.DS_Store
+*.pem
+certs
+
+# debug
+npm-debug.log*
+
+# local env files
+.env*.local
+.env.keys
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# app
+dist/
+.content-collections
+
+# Turborepo
+.turbo
+
+# Github Actions
+gha-creds-*.json
+
+# playwright
+apps/playwright/test-results/
+apps/playwright/playwright-report/
+apps/playwright/blob-report/
+/apps/playwright/.cache/
+/apps/playwright/.auth/
+/apps/playwright/.features-gen/
+
+CLAVE GEMINI.txt
+*.txt
+
+
+.env
+.env.local
+

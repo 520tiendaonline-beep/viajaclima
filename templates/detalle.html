@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de {{ viaje.ciudad }} - ViajaClima{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <a href="{{ url_for('panel') }}" class="back-link">&larr; Volver al panel de viajes</a>
+
+    <div class="card trip-detail-card">
+        <div class="trip-header-main">
+            <div>
+                <h2>📍 {{ viaje.ciudad }}, {{ viaje.pais }}</h2>
+                <p class="trip-date">
+                    📅 Fechas del viaje: <strong>{{ viaje.fecha_inicio }}</strong> hasta <strong>{{ viaje.fecha_fin }}</strong>
+                </p>
+            </div>
+            <form action="{{ url_for('eliminar_viaje', viaje_id=viaje.id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este destino?');">
+                <button type="submit" class="btn btn-sm btn-danger">🗑️ Eliminar Viaje</button>
+            </form>
+        </div>
+
+        <!-- SECCIÓN DE PREVISIÓN METEOROLÓGICA (SATELITAL O HISTÓRICA) -->
+        <div class="forecast-section">
+            <div class="forecast-header">
+                <div>
+                    <h3>🌤️ Previsión Meteorológica para las Fechas de tu Viaje</h3>
+                    {% if clima.tipo_prevision == 'satelital' %}
+                        <p class="forecast-sub">📡 Datos satelitales en vivo de alta resolución para tus fechas.</p>
+                    {% elif clima.tipo_prevision == 'historico' %}
+                        <p class="forecast-sub">📊 Datos meteorológicos históricos reales para esa misma época del año (Open-Meteo ERA5).</p>
+                    {% else %}
+                        <p class="forecast-sub">ℹ️ Tendencia climática actual de referencia para los próximos días.</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if clima.tipo_prevision == 'satelital' %}
+                        <span class="badge badge-success">✓ Pronóstico satelital en vivo</span>
+                    {% elif clima.tipo_prevision == 'historico' %}
+                        <span class="badge badge-purple">📊 Clima histórico de referencia</span>
+                    {% else %}
+                        <span class="badge badge-warning">ℹ️ Previsión de referencia</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if clima.dias and clima.dias|length > 0 %}
+                <div class="forecast-grid">
+                    {% for dia in clima.dias %}
+                        <div class="forecast-day-card">
+                            <div class="day-date">{{ dia.fecha }}</div>
+                            <div class="day-icon">{{ dia.icono }}</div>
+                            <div class="day-condition">{{ dia.condicion }}</div>
+                            <div class="day-temps">
+                                <span class="temp-min" title="Temperatura Mínima">⬇ {{ dia.temp_min }}°C</span>
+                                <span class="temp-max" title="Temperatura Máxima">⬆ {{ dia.temp_max }}°C</span>
+                            </div>
+                            <div class="day-rain" title="Precipitaciones">
+                                💧 {{ dia.lluvia_info }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="weather-box">
+                    🌡️ <strong>Clima:</strong> {{ clima.resumen or viaje.clima_info }}
+                </div>
+            {% endif %}
+        </div>
+
+        <hr class="separator">
+
+        <!-- ASISTENTE DE IA BASADO EN ESTE CLIMA -->
+        <div class="ia-section">
+            <h3>🤖 Asistente IA para este destino</h3>
+            <p class="section-desc">
+                Hazle una pregunta a la IA. El asistente analizará <strong>el clima previsto para tus fechas exactas</strong> para recomendarte actividades y ropa:
+            </p>
+
+            <form action="{{ url_for('consultar_viaje_ia', viaje_id=viaje.id) }}" method="POST" class="trip-ia-form">
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        name="pregunta_viaje" 
+                        class="form-control"
+                        placeholder="Ej: Según este clima, ¿qué ropa debo llevar y qué actividades me recomiendas hacer?" 
+                        required>
+                </div>
+                <button type="submit" class="btn btn-primary">✨ Consultar a la IA con datos del clima</button>
+            </form>
+
+            {% if viaje.actividades_ia %}
+                <div class="ia-result">
+                    <pre>{{ viaje.actividades_ia }}</pre>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
