@@ -9,7 +9,11 @@
 <body>
     <header class="navbar">
         <div class="container nav-content">
-            <a href="{{ url_for('inicio') }}" class="nav-logo">✈️ ViajaClima</a>
+            <a href="{{ url_for('inicio') }}" class="nav-logo">
+                <!-- ARCHIVOS ESTÁTICOS: Imagen local vinculada con url_for como enseñó la cátedra -->
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo ViajaClima" class="brand-logo">
+                <span>ViajaClima</span>
+            </a>
             <nav class="nav-links">
                 <a href="{{ url_for('inicio') }}">Inicio</a>
                 {% if session.get('usuario_id') %}
